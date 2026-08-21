@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://adeebpk0-beep.github.io/Soft-Dream-Beds/sitemap.xml
