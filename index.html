@@ -849,9 +849,8 @@ document.getElementById("galleryImage").src=images[currentImage];
 
 }
 </script>
-  
-<script>
-document.getElementById("signupBtn").onclick = async function() {
+  <script>
+document.getElementById("signupBtn").onclick = async function () {
   const email = document.getElementById("customerEmail").value.trim();
   const password = document.getElementById("customerPassword").value;
   const message = document.getElementById("loginMessage");
@@ -868,25 +867,30 @@ document.getElementById("signupBtn").onclick = async function() {
 
   message.innerText = "Creating account...";
 
-  const { data, error } = await supabaseClient.auth.signUp({
-    email: email,
-    password: password
-  });
+  try {
+    const { data, error } = await supabaseClient.auth.signUp({
+      email: email,
+      password: password
+    });
 
-  if (error) {
-    message.innerText = error.message;
-    return;
-  }
+    if (error) {
+      message.innerText = error.message;
+      return;
+    }
 
-  if (data.session) {
-    showWelcome(data.user.email);
-  } else {
-    message.innerText =
-      "Account created! Please check your email to confirm your account.";
+    if (data.session) {
+      showWelcome(data.user.email);
+    } else {
+      message.innerText =
+        "Account created! Please check your email to confirm your account.";
+    }
+  } catch (err) {
+    message.innerText = "Connection error. Please try again.";
   }
 };
 
-document.getElementById("loginBtn").onclick = async function() {
+
+document.getElementById("loginBtn").onclick = async function () {
   const email = document.getElementById("customerEmail").value.trim();
   const password = document.getElementById("customerPassword").value;
   const message = document.getElementById("loginMessage");
@@ -898,19 +902,29 @@ document.getElementById("loginBtn").onclick = async function() {
 
   message.innerText = "Logging in...";
 
-  const { data, error } =
-    await supabaseClient.auth.signInWithPassword({
-      email: email,
-      password: password
-    });
+  try {
+    const { data, error } =
+      await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
 
-  if (error) {
-    message.innerText = error.message;
-    return;
+    if (error) {
+      message.innerText = error.message;
+      return;
+    }
+
+    if (data && data.user) {
+      showWelcome(data.user.email);
+    } else {
+      message.innerText = "Login failed. Please try again.";
+    }
+
+  } catch (err) {
+    message.innerText = "Login connection error. Please try again.";
   }
-
-  showWelcome(data.user.email);
 };
+
 
 function showWelcome(email) {
   document.getElementById("customerEmail").style.display = "none";
@@ -919,22 +933,23 @@ function showWelcome(email) {
   document.getElementById("loginBtn").style.display = "none";
 
   document.getElementById("loginMessage").innerHTML =
-    "Welcome to <b>Soft Dream Beds</b> ❤️<br>Logged in as: " + email +
+    "Welcome to <b>Soft Dream Beds</b> ❤️<br>" +
+    "Logged in as: " + email +
     "<br><br>" +
     '<button id="logoutBtn" style="background:#333;color:white;padding:12px 25px;border:0;border-radius:20px;">Logout</button>';
 
-  document.getElementById("logoutBtn").onclick = async function() {
+  document.getElementById("logoutBtn").onclick = async function () {
     await supabaseClient.auth.signOut();
     location.reload();
   };
 }
 
-supabaseClient.auth.getSession().then(function(result) {
-  if (result.data.session) {
+
+supabaseClient.auth.getSession().then(function (result) {
+  if (result.data && result.data.session) {
     showWelcome(result.data.session.user.email);
   }
 });
-</script>
-
+  </script>
 </body>
   </html>
