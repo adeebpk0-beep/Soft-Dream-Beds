@@ -849,69 +849,91 @@ document.getElementById("galleryImage").src=images[currentImage];
 
 }
 
-
 <script>
-function customerSignUp() {
+document.getElementById("signupBtn").onclick = async function() {
   const email = document.getElementById("customerEmail").value.trim();
   const password = document.getElementById("customerPassword").value;
   const message = document.getElementById("loginMessage");
 
   if (!email || !password) {
-    message.innerText = "Please enter your email and password.";
+    message.innerText = "Please enter email and password.";
     return;
   }
 
-  localStorage.setItem("customerEmail", email);
-  localStorage.setItem("customerPassword", password);
-  localStorage.setItem("customerLoggedIn", "true");
+  if (password.length < 6) {
+    message.innerText = "Password must be at least 6 characters.";
+    return;
+  }
 
-  showLoggedIn();
-}
+  message.innerText = "Creating account...";
 
-function customerLogin() {
+  const { data, error } = await supabaseClient.auth.signUp({
+    email: email,
+    password: password
+  });
+
+  if (error) {
+    message.innerText = error.message;
+    return;
+  }
+
+  if (data.session) {
+    showWelcome(data.user.email);
+  } else {
+    message.innerText =
+      "Account created! Please check your email to confirm your account.";
+  }
+};
+
+document.getElementById("loginBtn").onclick = async function() {
   const email = document.getElementById("customerEmail").value.trim();
   const password = document.getElementById("customerPassword").value;
   const message = document.getElementById("loginMessage");
 
-  const savedEmail = localStorage.getItem("customerEmail");
-  const savedPassword = localStorage.getItem("customerPassword");
-
-  if (email === savedEmail && password === savedPassword) {
-    localStorage.setItem("customerLoggedIn", "true");
-    showLoggedIn();
-  } else {
-    message.innerText = "Email or password is incorrect.";
+  if (!email || !password) {
+    message.innerText = "Please enter email and password.";
+    return;
   }
-}
 
-function showLoggedIn() {
+  message.innerText = "Logging in...";
+
+  const { data, error } =
+    await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+  if (error) {
+    message.innerText = error.message;
+    return;
+  }
+
+  showWelcome(data.user.email);
+};
+
+function showWelcome(email) {
   document.getElementById("customerEmail").style.display = "none";
   document.getElementById("customerPassword").style.display = "none";
-
-  document.querySelector("#login button:nth-of-type(1)").style.display = "none";
-  document.querySelector("#login button:nth-of-type(2)").style.display = "none";
+  document.getElementById("signupBtn").style.display = "none";
+  document.getElementById("loginBtn").style.display = "none";
 
   document.getElementById("loginMessage").innerHTML =
-    "Welcome! You are logged in to <b>Soft Dream Beds</b>.<br><br>" +
-    '<button onclick="customerLogout()" style="background:#FF4F8B;color:white;padding:12px 25px;border:0;border-radius:20px;">Logout</button>';
+    "Welcome to <b>Soft Dream Beds</b> ❤️<br>Logged in as: " + email +
+    "<br><br>" +
+    '<button id="logoutBtn" style="background:#333;color:white;padding:12px 25px;border:0;border-radius:20px;">Logout</button>';
+
+  document.getElementById("logoutBtn").onclick = async function() {
+    await supabaseClient.auth.signOut();
+    location.reload();
+  };
 }
 
-function customerLogout() {
-  localStorage.setItem("customerLoggedIn", "false");
-
-  document.getElementById("customerEmail").style.display = "block";
-  document.getElementById("customerPassword").style.display = "block";
-
-  document.querySelector("#login button:nth-of-type(1)").style.display = "inline-block";
-  document.querySelector("#login button:nth-of-type(2)").style.display = "inline-block";
-
-  document.getElementById("loginMessage").innerText = "You have been logged out."
-} 
-document.addEventListener("DOMContentLoaded", function() {
-  if (localStorage.getItem("customerLoggedIn") === "true") {
-    showLoggedIn();
+supabaseClient.auth.getSession().then(function(result) {
+  if (result.data.session) {
+    showWelcome(result.data.session.user.email);
   }
 });
 </script>
+
 </body>
   </html>
