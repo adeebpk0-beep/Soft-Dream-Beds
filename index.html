@@ -905,14 +905,13 @@ function customerLogout() {
   document.querySelector("#login button:nth-of-type(1)").style.display = "inline-block";
   document.querySelector("#login button:nth-of-type(2)").style.display = "inline-block";
 
-  document.getElementById("loginMessage").innerText = "You have been logged out.";
-}
-
-window.onload = function() {
+  document.getElementById("loginMessage").innerText = "You have been logged out."
+} 
+document.addEventListener("DOMContentLoaded", function() {
   if (localStorage.getItem("customerLoggedIn") === "true") {
     showLoggedIn();
   }
-};
+});
 </script>
 </body>
   </html>
