@@ -955,12 +955,19 @@ supabaseClient.auth.getSession().then(function (result) {
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-const SUPABASE_URL = "https://hqoclibivjmevpnqfzim.supabase.co";
+const SUPABASE_URL = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
 const SUPABASE_ANON_KEY = "sb_publishable_mXEbmi9-PdGh_Gv0dN72PA_bRwqvhdj";
 
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
-  SUPABASE_ANON_KEY
+  SUPABASE_ANON_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  }
 );
 </script>
   </html>
