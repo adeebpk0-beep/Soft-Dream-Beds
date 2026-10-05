@@ -952,4 +952,15 @@ supabaseClient.auth.getSession().then(function (result) {
 });
   </script>
 </body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "APNI_SUPABASE_URL_YAHAN";
+const SUPABASE_ANON_KEY = "APNI_SUPABASE_ANON_KEY_YAHAN";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+</script>
   </html>
