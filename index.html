@@ -849,6 +849,24 @@ document.getElementById("galleryImage").src=images[currentImage];
 
 }
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://hqoclibivjmevpnqfzim.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_mXEbmi9-PdGh_Gv0dN72PA_bRwqvhdj";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  }
+);
+</script>
   <script>
 document.getElementById("signupBtn").onclick = async function () {
   const email = document.getElementById("customerEmail").value.trim();
@@ -951,23 +969,6 @@ supabaseClient.auth.getSession().then(function (result) {
   }
 });
   </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script>
-const SUPABASE_URL = "https://hqoclibivjmevpnqfzim.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_mXEbmi9-PdGh_Gv0dN72PA_bRwqvhdj";
-
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY,
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true
-    }
-  }
-);
-</script>
 </body>
   </html>
