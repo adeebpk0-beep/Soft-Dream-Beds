@@ -992,5 +992,15 @@ supabaseClient.auth.getSession().then(function (result) {
 });
   </script>
 
+<!-- Soft Dream Beds Admin Upload -->
+<section id="admin-upload" style="max-width:500px;margin:30px auto;padding:20px;background:#fff0f6;border-radius:15px;font-family:Arial;text-align:center;">
+  <h2>Admin - Add New Bed</h2>
+  <input id="bedName" type="text" placeholder="Bed name" style="width:95%;padding:12px;margin:8px 0;box-sizing:border-box;">
+  <input id="bedPrice" type="number" placeholder="Price in SAR" style="width:95%;padding:12px;margin:8px 0;box-sizing:border-box;">
+  <input id="bedPhoto" type="file" accept="image/*" style="width:95%;padding:12px;margin:8px 0;box-sizing:border-box;">
+  <button id="publishBed" style="background:#FF4F8B;color:white;border:0;border-radius:10px;padding:12px 25px;font-size:16px;">Publish Bed</button>
+  <p id="uploadMessage"></p>
+</section>
+  
 </body>
   </html>
