@@ -1033,13 +1033,13 @@ document.getElementById('publishBed').addEventListener('click', async function (
     const path = Date.now() + '-' + safeName;
 
     const { error: uploadError } = await supabaseClient.storage
-      .from('product images')
+      .from('products images')
       .upload(path, file);
 
     if (uploadError) throw uploadError;
 
     const { data: imageData } = supabaseClient.storage
-      .from('product images')
+      .from('products images')
       .getPublicUrl(path);
 
     const { error: saveError } = await supabaseClient
