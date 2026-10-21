@@ -1002,5 +1002,69 @@ supabaseClient.auth.getSession().then(function (result) {
   <p id="uploadMessage"></p>
 </section>
   
+<script>
+document.getElementById('publishBed').addEventListener('click', async function () {
+  const message = document.getElementById('uploadMessage');
+  const name = document.getElementById('bedName').value.trim();
+  const price = Number(document.getElementById('bedPrice').value);
+  const file = document.getElementById('bedPhoto').files[0];
+
+  if (!name || !file || document.getElementById('bedPrice').value === '' || price < 0) {
+    message.textContent = 'Please enter bed name, price and photo.';
+    return;
+  }
+
+  if (typeof supabaseClient === 'undefined') {
+    message.textContent = 'Supabase connection is not configured.';
+    return;
+  }
+
+  this.disabled = true;
+  message.textContent = 'Uploading...';
+
+  try {
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+
+    if (!sessionData.session) {
+      throw new Error('Please log in first.');
+    }
+
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const path = Date.now() + '-' + safeName;
+
+    const { error: uploadError } = await supabaseClient.storage
+      .from('bed-images')
+      .upload(path, file);
+
+    if (uploadError) throw uploadError;
+
+    const { data: imageData } = supabaseClient.storage
+      .from('bed-images')
+      .getPublicUrl(path);
+
+    const { error: saveError } = await supabaseClient
+      .from('products')
+      .insert([{
+        name: name,
+        price: price,
+        image_path: imageData.publicUrl,
+        published: true
+      }]);
+
+    if (saveError) throw saveError;
+
+    message.textContent = 'Bed uploaded successfully!';
+    document.getElementById('bedName').value = '';
+    document.getElementById('bedPrice').value = '';
+    document.getElementById('bedPhoto').value = '';
+
+  } catch (error) {
+    message.textContent = 'Error: ' + error.message;
+  } finally {
+    this.disabled = false;
+  }
+});
+</script>
+  
 </body>
   </html>
