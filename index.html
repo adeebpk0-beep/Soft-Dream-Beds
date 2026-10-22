@@ -1043,7 +1043,7 @@ document.getElementById('publishBed').addEventListener('click', async function (
       .getPublicUrl(path);
 
     const { error: saveError } = await supabaseClient
-      .from('products')
+      .from('products image')
       .insert([{
         name: name,
         price: price,
