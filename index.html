@@ -872,7 +872,6 @@ document.getElementById("galleryImage").src=images[currentImage];
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
 const SUPABASE_URL = "https://hqoclibivjmevpnqfzim.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_mXEbmi9-PdGh_Gv0dN72PA_bRwqvhdj";
@@ -1043,7 +1042,7 @@ document.getElementById('publishBed').addEventListener('click', async function (
       .getPublicUrl(path);
 
     const { error: saveError } = await supabaseClient
-      .from('Products image')
+      .from('Products')
       .insert([{
         name: name,
         price: price,
