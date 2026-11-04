@@ -1051,7 +1051,8 @@ document.getElementById('publishBed').addEventListener('click', async function (
       }]);
 
     if (saveError) throw saveError;
-
+console.log("SAVE ERROR:", saveError);
+    
     message.textContent = 'Bed uploaded successfully!';
     document.getElementById('bedName').value = '';
     document.getElementById('bedPrice').value = '';
