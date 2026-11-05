@@ -1006,7 +1006,9 @@ document.getElementById('publishBed').addEventListener('click', async function (
   const message = document.getElementById('uploadMessage');
   const name = document.getElementById('bedName').value.trim();
   const price = Number(document.getElementById('bedPrice').value);
-  const file = document.getElementById('bedPhoto').files[0];
+  const files = Array.from(
+  document.getElementById('bedPhoto').files
+);
 
   if (!name || !file || document.getElementById('bedPrice').value === '' || price < 0) {
     message.textContent = 'Please enter bed name, price and photo.';
