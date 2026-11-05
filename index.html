@@ -1001,17 +1001,15 @@ supabaseClient.auth.getSession().then(function (result) {
   <p id="uploadMessage"></p>
 </section>
   
-<script>
 document.getElementById('publishBed').addEventListener('click', async function () {
   const message = document.getElementById('uploadMessage');
   const name = document.getElementById('bedName').value.trim();
-  const price = Number(document.getElementById('bedPrice').value);
-  const files = Array.from(
-  document.getElementById('bedPhoto').files
-);
+  const priceText = document.getElementById('bedPrice').value;
+  const price = Number(priceText);
+  const files = Array.from(document.getElementById('bedPhoto').files);
 
-  if (!name || !file || document.getElementById('bedPrice').value === '' || price < 0) {
-    message.textContent = 'Please enter bed name, price and photo.';
+  if (!name || !files.length || files.length > 5 || priceText === '' || price < 0) {
+    message.textContent = 'Enter name, price and 1 to 5 photos.';
     return;
   }
 
@@ -1021,44 +1019,49 @@ document.getElementById('publishBed').addEventListener('click', async function (
   }
 
   this.disabled = true;
-  message.textContent = 'Uploading...';
+  message.textContent = 'Uploading photos...';
 
   try {
     const { data: sessionData } = await supabaseClient.auth.getSession();
+    if (!sessionData.session) throw new Error('Please log in first.');
 
-    if (!sessionData.session) {
-      throw new Error('Please log in first.');
+    const imageUrls = [];
+
+    for (const file of files) {
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const path = Date.now() + '-' + Math.random().toString(36).slice(2) + '-' + safeName;
+
+      const { error } = await supabaseClient.storage
+        .from('Products image')
+        .upload(path, file);
+
+      if (error) throw error;
+
+      const { data } = supabaseClient.storage
+        .from('Products image')
+        .getPublicUrl(path);
+
+      imageUrls.push(data.publicUrl);
     }
-
-    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-    const path = Date.now() + '-' + safeName;
-
-    const { error: uploadError } = await supabaseClient.storage
-      .from('Products image')
-      .upload(path, file);
-
-    if (uploadError) throw uploadError;
-
-    const { data: imageData } = supabaseClient.storage
-      .from('Products image')
-      .getPublicUrl(path);
 
     const { error: saveError } = await supabaseClient
       .from('Products')
       .insert([{
         name: name,
         price: price,
-        image_path: imageData.publicUrl,
+        image_path: imageUrls[0],
+        image_paths: imageUrls,
         published: true
       }]);
 
     if (saveError) throw saveError;
-console.log("SAVE ERROR:", saveError);
-    
+
     message.textContent = 'Bed uploaded successfully!';
     document.getElementById('bedName').value = '';
     document.getElementById('bedPrice').value = '';
     document.getElementById('bedPhoto').value = '';
+
+    await loadBeds();
 
   } catch (error) {
     message.textContent = 'Error: ' + error.message;
@@ -1066,6 +1069,8 @@ console.log("SAVE ERROR:", saveError);
     this.disabled = false;
   }
 });
+    
+
 </script>
   <section id="uploaded-beds">
   <h2>Our Beds</h2>
