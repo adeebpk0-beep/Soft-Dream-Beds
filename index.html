@@ -1087,8 +1087,9 @@ async function loadBeds() {
   const container = document.getElementById('beds-list');
 
   container.innerHTML = data.map(bed => {
-    const images = bed.image_paths || [bed.image_path];
-
+    const images = Array.isArray(bed.image_paths)
+  ? bed.image_paths
+  : [bed.image_path];
     return `
       <div style="background:white;padding:15px;margin:15px;border-radius:12px;">
         <div style="display:flex;gap:10px;overflow-x:auto;">
